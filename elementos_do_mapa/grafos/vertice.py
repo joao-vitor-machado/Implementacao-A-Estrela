@@ -1,0 +1,9 @@
+from select import select
+
+#atualmente sem valor para o projeto
+class Vertice:
+    def __init__ (self, name):
+        self._name = name
+
+    def get_name(self):
+        return self._name
