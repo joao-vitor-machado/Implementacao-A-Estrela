@@ -1,0 +1,41 @@
+Presidente Prudente,Assis,128
+Presidente Prudente,Araçatuba,172
+Assis,Marília,75
+Marília,Bauru,106
+Araçatuba,Fernandópolis,138
+Araçatuba,Bauru,194
+Fernandópolis,SJRP,116
+SJRP,Barretos,95
+SJRP,Araraquara,171
+Barretos,Franca,140
+Barretos,Ribeirão Preto,123
+Franca,Ribeirão Preto,92
+Ribeirão Preto,SJBV,85
+Ribeirão Preto,Araraquara,88
+Ribeirão Preto,São Carlos,102
+Araraquara,Bauru,127
+Araraquara,São Carlos,43
+São Carlos,Bauru,163
+São Carlos,Limeira,90
+São Carlos,Piracicaba,98
+Bauru,Botucatu,95
+Botucatu,Sorocaba,158
+SJBV,Mogi Mirim,68
+Mogi Mirim,Limeira,54
+Mogi Mirim,Campinas,67
+Limeira,Campinas,52
+Piracicaba,Campinas,59
+Piracicaba,Jundiaí,106
+Itapeva,Sorocaba,192
+Campinas,Jundiaí,44
+Jundiaí,SJC,143
+Jundiaí,Guarulhos,73
+Jundiaí,SP,56
+SP,Guarulhos,23
+SP,Santos,79
+SP,Registro,183
+Guarulhos,SJC,81
+Guarulhos,Santos,88
+Registro,Itanhaem,125
+Itanhaem,Santos,56
+SJC,Taubaté,41
