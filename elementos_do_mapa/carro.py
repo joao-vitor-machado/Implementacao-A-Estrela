@@ -3,4 +3,4 @@ class Carro:
         self._consumo = consumo
 
     def  get_consumo(self):
-        return self._consumo
+        return self._consumox
