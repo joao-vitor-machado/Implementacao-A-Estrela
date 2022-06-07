@@ -1,36 +1,36 @@
-Presidente Prudente,Assis,128
-Presidente Prudente,Araçatuba,172
-Assis,Marília,75
-Marília,Bauru,106
-Araçatuba,Fernandópolis,138
-Araçatuba,Bauru,194
-Fernandópolis,SJRP,116
+Presidente_Prudente,Assis,128
+Presidente_Prudente,Aracatuba,172
+Assis,Marilia,75
+Marilia,Bauru,106
+Aracatuba,Fernandopolis,138
+Aracatuba,Bauru,194
+Fernandopolis,SJRP,116
 SJRP,Barretos,95
 SJRP,Araraquara,171
 Barretos,Franca,140
-Barretos,Ribeirão Preto,123
-Franca,Ribeirão Preto,92
-Ribeirão Preto,SJBV,85
-Ribeirão Preto,Araraquara,88
-Ribeirão Preto,São Carlos,102
+Barretos,Ribeirao_Preto,123
+Franca,Ribeirao_Preto,92
+Ribeirao_Preto,SJBV,85
+Ribeirao_Preto,Araraquara,88
+Ribeirao_Preto,Sao_Carlos,102
 Araraquara,Bauru,127
-Araraquara,São Carlos,43
-São Carlos,Bauru,163
-São Carlos,Limeira,90
-São Carlos,Piracicaba,98
+Araraquara,Sao_Carlos,43
+Sao_Carlos,Bauru,163
+Sao_Carlos,Limeira,90
+Sao_Carlos,Piracicaba,98
 Bauru,Botucatu,95
 Botucatu,Sorocaba,158
-SJBV,Mogi Mirim,68
-Mogi Mirim,Limeira,54
-Mogi Mirim,Campinas,67
+SJBV,Mogi_Mirim,68
+Mogi_Mirim,Limeira,54
+Mogi_Mirim,Campinas,67
 Limeira,Campinas,52
 Piracicaba,Campinas,59
-Piracicaba,Jundiaí,106
+Piracicaba,Jundiai,106
 Itapeva,Sorocaba,192
-Campinas,Jundiaí,44
-Jundiaí,SJC,143
-Jundiaí,Guarulhos,73
-Jundiaí,SP,56
+Campinas,Jundiai,44
+Jundiai,SJC,143
+Jundiai,Guarulhos,73
+Jundiai,SP,56
 SP,Guarulhos,23
 SP,Santos,79
 SP,Registro,183
@@ -38,4 +38,4 @@ Guarulhos,SJC,81
 Guarulhos,Santos,88
 Registro,Itanhaem,125
 Itanhaem,Santos,56
-SJC,Taubaté,41
+SJC,Taubate,41
