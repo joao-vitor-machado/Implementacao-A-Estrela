@@ -1,8 +1,5 @@
 class Heuristica:
 
-    def  __init__(self):
-        self._preco_gasolina = 6
-
-    def calculate(self, via, carro):
-        #consideramos sempre que o carro está na velocidade máxima permitida na via
-        return (((via.get_speed_limit() / carro.get_consumo) * self._preco_gasolina) + (via.get_kilometers() / via.get_speed_limit()))
+    def calculate(self, no_1, no_2, mapa):
+        #Aqui devemos pegar a aresta com base no no_1 e no_2 e distância euclidiana do nó 2 ao nó obejtivo pelo mapa
+        return ()
