@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-class Distancias_Entre_Cidades:
+class Distancias_Euclidianas_Entre_Cidades:
 
     _instance = None
 
@@ -11,7 +11,7 @@ class Distancias_Entre_Cidades:
     @classmethod
     def instance(self):
         if self._instance == None:
-            self._instance = Distancias_Entre_Cidades()
+            self._instance = Distancias_Euclidianas_Entre_Cidades()
         return self._instance
 
     def set_db(self, db):

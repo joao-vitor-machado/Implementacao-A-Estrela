@@ -1,6 +1,7 @@
 from copy import deepcopy
 import enum
 import networkx as nx
+from elementos_do_mapa.distancias_Euclidianas_Entre_Cidades import Distancias_Euclidianas_Entre_Cidades
 from elementos_do_mapa.colecao_no import Colecao_No
 
 class Mapa:
@@ -11,13 +12,26 @@ class Mapa:
         self._lista_abertos = []
         self._lista_fechados = []
         
-        self._grafo = nx.read_weighted_edgelist('./elementos_do_mapa/grafos/cidades.txt', delimiter =",")
+        self._grafo = nx.read_edgelist('./elementos_do_mapa/grafos/cidades.txt', delimiter =",", data=[("distancia_real", int), ("velocidade_maxima", int)])
 
     @classmethod
     def instance(self):
         if self._instance == None:
             self._instance = Mapa()
         return self._instance
+
+
+    def get_velocidade_maxima_entre_nos(self, nome_no_1, nome_no_2):
+
+        properties_aresta = self._grafo[nome_no_1][nome_no_2]
+
+        return properties_aresta["velocidade_maxima"]
+
+    def get_distancia_real_entre_nos(self, nome_no_1, nome_no_2):
+
+        properties_aresta = self._grafo[nome_no_1][nome_no_2]
+
+        return properties_aresta["distancia_real"]
 
     def get_no_objetivo(self):
         return self._cidade_objetiva
@@ -59,12 +73,12 @@ class Mapa:
     def get_no_menor_custo(self, lista_nos):
         menor_custo = float("inf")
         no_com_menor_custo = None
+        colecao = Colecao_No(self.get_no_objetivo())
 
         for nome_no in lista_nos:
-            colecao = Colecao_No(self.get_no_objetivo())
             no = colecao.get_um_no(nome_no)
-            if no.get_distancia_euclidiana() < menor_custo:
-                menor_custo = no.get_distancia_euclidiana()
+            if self.funcao_heuristica(self.get_no_atual(), nome_no) < menor_custo:
+                menor_custo = self.funcao_heuristica(self.get_no_atual(), nome_no)
                 no_com_menor_custo = no
 
         return no_com_menor_custo
@@ -72,6 +86,19 @@ class Mapa:
     def ir_para_no(self, nome_no):
         self.add_lista_fechados(nome_no)
         self.remove_lista_abertos(nome_no)
+
+    def funcao_heuristica(self, nome_no_1, nome_no_2):
+        #Aqui devemos pegar a aresta com base no no_1 e no_2 e distância euclidiana do nó 2 ao nó obejtivo pelo mapa
+        distancia_real_entre_nos = self.get_distancia_real_entre_nos(nome_no_1, nome_no_2)
+        velocidade_maxima_entre_nos = self.get_velocidade_maxima_entre_nos(nome_no_1, nome_no_2)
+
+        distancia_euclidiana_ate_no_objetivo = Distancias_Euclidianas_Entre_Cidades.instance().get_distancia_entre_cidades(nome_no_2, self.get_no_objetivo())
+        velocidade_maxima = 110
+
+        return ((distancia_real_entre_nos/velocidade_maxima_entre_nos) + (distancia_euclidiana_ate_no_objetivo/velocidade_maxima))
+
+
+
 
     def run_A_estela(self, nome_no_incial, nome_no_objetivo):
         self._cidade_inicial = nome_no_incial
