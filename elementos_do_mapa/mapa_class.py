@@ -11,6 +11,8 @@ class Mapa:
     def __init__(self):
         self._lista_abertos = []
         self._lista_fechados = []
+        self._caminho_solucao = []
+        
         
         self._grafo = nx.read_edgelist('./elementos_do_mapa/grafos/cidades.txt', delimiter =",", data=[("distancia_real", int), ("velocidade_maxima", int)])
 
@@ -37,14 +39,35 @@ class Mapa:
         return self._cidade_objetiva
 
     def get_no_atual(self):
-        return self.get_lista_fechados()[-1]
+        return self.get_lista_solucao()[-1]
+
+    def get_lista_solucao(self):
+        return self._caminho_solucao
 
     def get_lista_abertos(self):
         return deepcopy(self._lista_abertos)
 
-    def add_lista_abertos(self, nome_no):
-        self._lista_abertos.append(nome_no)
-        return "no: " + nome_no + " foi adicionado à lista de abertos"
+    def add_lista_solucao(self, nome_no):
+        self._caminho_solucao.append(nome_no)
+
+    def remove_lista_solucao(self, nome_no):
+        try:
+            self._caminho_solucao.remove(nome_no)
+            return "no: " + nome_no + " foi removido da lista de solução"
+        except:
+            return "Não há ocorrência desse nó na lista de solução"
+
+    def add_lista_abertos(self, value):
+
+        if type(value) is str:
+            if self._lista_abertos.count(value) < 1 and self._lista_fechados.count(value) < 1:
+                self._lista_abertos.append(value)
+                return "no: " + value + " foi adicionado à lista de abertos"
+        if type(value) is list:
+            for no in value:
+                if self._lista_abertos.count(no) < 1 and self._lista_fechados.count(no) < 1:
+                    self._lista_abertos.append(no)
+                    return "nos adicionados à lista de abertos"
 
     def remove_lista_abertos(self, nome_no):
         try:
@@ -58,6 +81,9 @@ class Mapa:
 
     def add_lista_fechados(self, nome_no):
         self._lista_fechados.append(nome_no)
+        lista_nos_adjacentes = self.get_nos_adjacentes(nome_no)
+        for no in lista_nos_adjacentes:
+            self.add_lista_abertos(no)
         return "no: " + nome_no + " foi adicionado à lista de fechados"
 
     def get_nos_adjacentes(self, nome_no):
@@ -70,27 +96,53 @@ class Mapa:
         return lista_adjacentes
 
     #Isso pode ser um ponto a se verificar depois por conta de desempate de custos
+
     def get_no_menor_custo(self, lista_nos):
-        menor_custo = float("inf")
         no_com_menor_custo = None
-        colecao = Colecao_No(self.get_no_objetivo())
+        menor_custo = float("inf")
+        # colecao_euclidianas = Colecao_No(self.get_no_objetivo())
+        lista_heuristicas_calculadas = []
 
         for nome_no in lista_nos:
-            no = colecao.get_um_no(nome_no)
-            if self.funcao_heuristica(self.get_no_atual(), nome_no) < menor_custo:
-                menor_custo = self.funcao_heuristica(self.get_no_atual(), nome_no)
-                no_com_menor_custo = no
+            nos_adjacentes = self.get_nos_adjacentes(nome_no)
+            for no_adjacente in nos_adjacentes:
+                # if self.funcao_heuristica(nome_no, no) < self._menor_custo:
+                lista_heuristicas_calculadas.append({"no_fechado":nome_no, "no_adjacente": no_adjacente, "f_de_x" : self.funcao_heuristica(nome_no, no_adjacente)})
 
-        return no_com_menor_custo
+        for valor in lista_heuristicas_calculadas:
+            if valor["f_de_x"] < menor_custo:
+                menor_custo = valor["f_de_x"]
+                no_com_menor_custo = valor
+
+        return no_com_menor_custo #é um map com todas as infos
 
     def ir_para_no(self, nome_no):
         self.add_lista_fechados(nome_no)
         self.remove_lista_abertos(nome_no)
 
+    def calcular_g_de_x(self, nome_no_1, nome_no_2):
+        lista_nos_caminho = self.get_lista_solucao()
+        soma_de_distancia = 0
+        soma_de_velocidade = 0
+        for i in range(len(lista_nos_caminho)):
+            try:
+                soma_de_distancia += self.get_distancia_real_entre_nos(lista_nos_caminho[i], lista_nos_caminho[i+1])
+                soma_de_velocidade += self.get_velocidade_maxima_entre_nos(lista_nos_caminho[i], lista_nos_caminho[i+1])
+            except:
+                soma_de_distancia += 0
+                soma_de_velocidade += 0
+
+        soma_de_distancia += self.get_distancia_real_entre_nos(nome_no_1, nome_no_2)
+        soma_de_velocidade += self.get_velocidade_maxima_entre_nos(nome_no_1, nome_no_2)
+
+        return {"soma_de_distancia": soma_de_distancia, "soma_de_velocidade":soma_de_velocidade}
+
+
     def funcao_heuristica(self, nome_no_1, nome_no_2):
         #Aqui devemos pegar a aresta com base no no_1 e no_2 e distância euclidiana do nó 2 ao nó obejtivo pelo mapa
-        distancia_real_entre_nos = self.get_distancia_real_entre_nos(nome_no_1, nome_no_2)
-        velocidade_maxima_entre_nos = self.get_velocidade_maxima_entre_nos(nome_no_1, nome_no_2)
+        g_de_x = self.calcular_g_de_x(nome_no_1, nome_no_2)
+        distancia_real_entre_nos = g_de_x["soma_de_distancia"]
+        velocidade_maxima_entre_nos = g_de_x["soma_de_velocidade"]
 
         distancia_euclidiana_ate_no_objetivo = Distancias_Euclidianas_Entre_Cidades.instance().get_distancia_entre_cidades(nome_no_2, self.get_no_objetivo())
         velocidade_maxima = 110
@@ -104,17 +156,27 @@ class Mapa:
         self._cidade_inicial = nome_no_incial
         self._cidade_objetiva = nome_no_objetivo
         self.add_lista_fechados(nome_no_incial)
-
-        no_atual = self.get_no_atual()
+        self.add_lista_solucao(nome_no_incial)
         
+
+        no_atual = nome_no_incial
+
         while no_atual != self._cidade_objetiva:
-            lista_nos_adjacentes = self.get_nos_adjacentes(no_atual)
-            no_menor_custo = self.get_no_menor_custo(lista_nos_adjacentes).get_nome()
-            no_atual = no_menor_custo
+            self.add_lista_abertos(self.get_nos_adjacentes(no_atual))   
+            print(self.get_lista_fechados()) 
+            print(self.get_lista_abertos()) 
+            print(self.get_lista_solucao())
+
+            no_menor_custo = self.get_no_menor_custo(self.get_lista_fechados())
+            if no_menor_custo["no_fechado"] != self.get_lista_fechados()[-1]:
+                posicao_no_remocao = self.get_lista_solucao().index(no_menor_custo["no_fechado"])
+                self._caminho_solucao = self.get_lista_solucao()[-posicao_no_remocao:-1]
+                self.add_lista_solucao(no_menor_custo["no_adjacente"])
+            no_atual = no_menor_custo["no_adjacente"]
 
             self.add_lista_fechados(no_atual)
             self.remove_lista_abertos(no_atual)
+            self.add_lista_solucao(no_atual)
 
-
-        return self.get_lista_fechados()
+        return self.get_lista_solucao()
     
