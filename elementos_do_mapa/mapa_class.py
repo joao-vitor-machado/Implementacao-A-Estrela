@@ -179,7 +179,6 @@ class Mapa:
                         nos_anteriores[no_adjacente] = no_atual
 
                         if no_adjacente in self._lista_fechados:
-                            print("---//------//---- ENTROU ---//-------//-----")
                             self._lista_fechados.remove(no_adjacente)
                             self.add_lista_abertos(no_adjacente)
                 
