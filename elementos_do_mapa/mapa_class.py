@@ -36,11 +36,9 @@ class Mapa:
 
         return properties_aresta["distancia_real"]
 
-
     def get_no_objetivo(self):
         return self._cidade_objetiva
    
-
     def get_lista_solucao(self):
         return self._caminho_solucao
 
@@ -81,10 +79,7 @@ class Mapa:
 
     def add_lista_fechados(self, nome_no):
         self._lista_fechados.append(nome_no)
-        # lista_nos_adjacentes = self.get_nos_adjacentes(nome_no)
 
-        # for no in lista_nos_adjacentes:
-        #     self.add_lista_abertos(no)
 
         return "no: " + nome_no + " foi adicionado à lista de fechados"
 
@@ -102,7 +97,6 @@ class Mapa:
         lista_adjacentes = []
 
         for no in map:
-            #if self._lista_fechados.count(no) < 1:
             lista_adjacentes.append(no)
         
         return lista_adjacentes
@@ -128,7 +122,7 @@ class Mapa:
         return round((self.get_distancia_real_entre_nos(no_1, no_2)/self.get_velocidade_maxima_entre_nos(no_1, no_2)),2)
     
 
-    def a_star_imp(self, no_inicial, no_objetivo):
+    def run_a_Estela(self, no_inicial, no_objetivo):
 
         def f_de_x(no):
             return self.funcao_avaliacao(custo_acumulado[no], self.funcao_heuristica(no))
@@ -170,6 +164,9 @@ class Mapa:
                 self.add_lista_solucao(no_atual)
                 self._caminho_solucao.reverse()
 
+                print("")
+                print("<-------------------------------------------------------------------------->")
+                print("")
                 return self.get_lista_solucao()
         
             for no_adjacente in self.get_nos_adjacentes(no_atual):
@@ -187,8 +184,8 @@ class Mapa:
             self.remove_lista_abertos(no_atual)
 
            
-            print("lista abertos: "+str(self.get_lista_abertos()))
             print(("lista fechados: "+str(self.get_lista_fechados())))
+            print("lista abertos: "+str(self.get_lista_abertos()))
 
         print('Solucao inexistente')
         return None

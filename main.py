@@ -10,4 +10,4 @@ Distancias_Euclidianas_Entre_Cidades.instance().set_db(pd.read_excel("./elemento
 no_incial = "Limeira"
 no_objetivo = "Santos"
 
-print("Caminho encontrado: "+str(Mapa.instance().a_star_imp(no_incial, no_objetivo)))
+print("Caminho encontrado: "+str(Mapa.instance().run_a_Estela(no_incial, no_objetivo)))
