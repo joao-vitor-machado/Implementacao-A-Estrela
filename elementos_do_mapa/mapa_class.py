@@ -25,14 +25,12 @@ class Mapa:
 
 
     def get_velocidade_maxima_entre_nos(self, nome_no_1, nome_no_2):
-
         properties_aresta = self._grafo[nome_no_1][nome_no_2]
 
         return properties_aresta["velocidade_maxima"]
 
 
     def get_distancia_real_entre_nos(self, nome_no_1, nome_no_2):
-
         properties_aresta = self._grafo[nome_no_1][nome_no_2]
 
         return properties_aresta["distancia_real"]
@@ -59,6 +57,7 @@ class Mapa:
             if self._lista_abertos.count(value) < 1 and self._lista_fechados.count(value) < 1:
                 self._lista_abertos.append(value)
                 return "no: " + value + " foi adicionado à lista de abertos"
+
         if type(value) is list:
             for no in value:
                 if self._lista_abertos.count(no) < 1 and self._lista_fechados.count(no) < 1:
@@ -70,6 +69,7 @@ class Mapa:
         try:
             self._lista_abertos.remove(nome_no)
             return "no: " + nome_no + " foi removido da lista de abertos"
+
         except:
             return "não há nó com esse nome para ser removido"
 
@@ -81,8 +81,10 @@ class Mapa:
     def add_lista_fechados(self, nome_no):
         self._lista_fechados.append(nome_no)
         lista_nos_adjacentes = self.get_nos_adjacentes(nome_no)
+
         for no in lista_nos_adjacentes:
             self.add_lista_abertos(no)
+
         return "no: " + nome_no + " foi adicionado à lista de fechados"
 
 
@@ -97,9 +99,9 @@ class Mapa:
         return lista_adjacentes
 
 
-    def funcao_heuristica(self, nome_no_2):
+    def funcao_heuristica(self, no):
 
-        distancia_euclidiana_ate_no_objetivo = Distancias_Euclidianas_Entre_Cidades.instance().get_distancia_entre_cidades(nome_no_2, self.get_no_objetivo())
+        distancia_euclidiana_ate_no_objetivo = Distancias_Euclidianas_Entre_Cidades.instance().get_distancia_entre_cidades(no, self.get_no_objetivo())
         velocidade_maxima = 110
 
         return (float(distancia_euclidiana_ate_no_objetivo/velocidade_maxima))
