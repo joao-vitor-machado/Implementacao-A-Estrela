@@ -101,9 +101,9 @@ class Mapa:
         map = self._grafo[nome_no]
         lista_adjacentes = []
 
-        for grafo in map:
-            #if self._lista_fechados.count(grafo) < 1:
-            lista_adjacentes.append(grafo)
+        for no in map:
+            #if self._lista_fechados.count(no) < 1:
+            lista_adjacentes.append(no)
         
         return lista_adjacentes
 
@@ -119,10 +119,13 @@ class Mapa:
         distancia_euclidiana_ate_no_objetivo = Distancias_Euclidianas_Entre_Cidades.instance().get_distancia_entre_cidades(no, self.get_no_objetivo())
         velocidade_minima = 60
 
-        return (float(distancia_euclidiana_ate_no_objetivo/velocidade_maxima))
+        return (float(distancia_euclidiana_ate_no_objetivo/velocidade_minima))
 
     def funcao_avaliacao(self, g, h):
         return g + h
+
+    def g_de_x(self, no_1, no_2):
+        return round((self.get_distancia_real_entre_nos(no_1, no_2)/self.get_velocidade_maxima_entre_nos(no_1, no_2)),2)
     
 
     def a_star_imp(self, no_inicial, no_objetivo):
@@ -147,6 +150,10 @@ class Mapa:
                 break
 
             if no == no_objetivo:
+
+                self.add_lista_fechados(no)
+                self.remove_lista_abertos(no)
+
                 while nos_anteriores[no] != no:
                     self.add_lista_solucao(no)
                     no = nos_anteriores[no]
@@ -163,22 +170,22 @@ class Mapa:
                 if no_vizinho not in self._lista_abertos and no_vizinho not in self._lista_fechados:
                     self.add_lista_abertos(no_vizinho)
                     nos_anteriores[no_vizinho] = no
-                    custo_acumulado[no_vizinho] = custo_acumulado[no] + (self.get_distancia_real_entre_nos(no, no_vizinho)/self.get_velocidade_maxima_entre_nos(no, no_vizinho)) #funcao g(x)
+                    custo_acumulado[no_vizinho] = custo_acumulado[no] + self.g_de_x(no, no_vizinho) #funcao g(x)
 
-                elif custo_acumulado[no_vizinho] > custo_acumulado[no] + (self.get_distancia_real_entre_nos(no, no_vizinho)/self.get_velocidade_maxima_entre_nos(no, no_vizinho)): #funcao g(x)
-                    custo_acumulado[no_vizinho] = custo_acumulado[no] + (self.get_distancia_real_entre_nos(no, no_vizinho)/self.get_velocidade_maxima_entre_nos(no, no_vizinho)) #funcao g(x)
+                elif custo_acumulado[no_vizinho] > custo_acumulado[no] + self.g_de_x(no, no_vizinho): #funcao g(x)
+                    custo_acumulado[no_vizinho] = custo_acumulado[no] + self.g_de_x(no, no_vizinho) #funcao g(x)
                     nos_anteriores[no_vizinho] = no
 
                     if no_vizinho in self._lista_fechados:
-                        self.remove_lista_fechados(no_vizinho)
+                        # self.remove_lista_fechados(no_vizinho)
                         self.add_lista_abertos(no_vizinho)
                 
                     
             self.add_lista_fechados(no)
             self.remove_lista_abertos(no)
 
-            print("lista abertos: "+str(self.get_lista_abertos()))
-            print(("lista fechados: "+str(self.get_lista_fechados())))
+            # print("lista abertos: "+str(self.get_lista_abertos()))
+            # print(("lista fechados: "+str(self.get_lista_fechados())))
 
         print('Solucao inexistente')
         return None
