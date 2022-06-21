@@ -13,8 +13,8 @@ class Mapa:
         self._lista_fechados = []
         self._caminho_solucao = []
         
-        
         self._grafo = nx.read_edgelist('./elementos_do_mapa/grafos/cidades.txt', delimiter =",", data=[("distancia_real", int), ("velocidade_maxima", int)])
+
 
     @classmethod
     def instance(self):
@@ -23,11 +23,13 @@ class Mapa:
         return self._instance
 
 
+
     def get_velocidade_maxima_entre_nos(self, nome_no_1, nome_no_2):
 
         properties_aresta = self._grafo[nome_no_1][nome_no_2]
 
         return properties_aresta["velocidade_maxima"]
+
 
     def get_distancia_real_entre_nos(self, nome_no_1, nome_no_2):
 
@@ -35,20 +37,24 @@ class Mapa:
 
         return properties_aresta["distancia_real"]
 
+
     def get_no_objetivo(self):
         return self._cidade_objetiva
    
+
     def get_lista_solucao(self):
         return self._caminho_solucao
+
 
     def get_lista_abertos(self):
         return deepcopy(self._lista_abertos)
 
+
     def add_lista_solucao(self, nome_no):
         self._caminho_solucao.append(nome_no)
 
-    def add_lista_abertos(self, value):
 
+    def add_lista_abertos(self, value):
         if type(value) is str:
             if self._lista_abertos.count(value) < 1 and self._lista_fechados.count(value) < 1:
                 self._lista_abertos.append(value)
@@ -59,6 +65,7 @@ class Mapa:
                     self._lista_abertos.append(no)
                     return "nos adicionados à lista de abertos"
 
+
     def remove_lista_abertos(self, nome_no):
         try:
             self._lista_abertos.remove(nome_no)
@@ -66,8 +73,10 @@ class Mapa:
         except:
             return "não há nó com esse nome para ser removido"
 
+
     def get_lista_fechados(self):
         return deepcopy(self._lista_fechados)
+
 
     def add_lista_fechados(self, nome_no):
         self._lista_fechados.append(nome_no)
@@ -75,6 +84,7 @@ class Mapa:
         for no in lista_nos_adjacentes:
             self.add_lista_abertos(no)
         return "no: " + nome_no + " foi adicionado à lista de fechados"
+
 
     def get_nos_adjacentes(self, nome_no):
         map = self._grafo[nome_no]
@@ -85,6 +95,7 @@ class Mapa:
             lista_adjacentes.append(grafo)
         
         return lista_adjacentes
+
 
     def funcao_heuristica(self, nome_no_2):
 
