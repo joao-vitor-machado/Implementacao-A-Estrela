@@ -170,7 +170,7 @@ class Mapa:
                     nos_anteriores[no_vizinho] = no
 
                     if no_vizinho in self._lista_fechados:
-                        self.remove_lista_fechados(no_vizinho)
+                        self._lista_fechados.remove(no_vizinho)
                         self.add_lista_abertos(no_vizinho)
                 
                     
