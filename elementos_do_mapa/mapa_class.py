@@ -121,11 +121,11 @@ class Mapa:
     def g_de_x(self, no_1, no_2):
         return round((self.get_distancia_real_entre_nos(no_1, no_2)/self.get_velocidade_maxima_entre_nos(no_1, no_2)),2)
     
+    def f_de_x(self, no, custo_acumulado):
+        return self.funcao_avaliacao(custo_acumulado, self.funcao_heuristica_inadmissivel(no))
+
 
     def run_a_Estela(self, no_inicial, no_objetivo):
-
-        def f_de_x(no):
-            return self.funcao_avaliacao(custo_acumulado[no], self.funcao_heuristica(no))
 
         self._cidade_objetiva = no_objetivo
 
@@ -143,11 +143,9 @@ class Mapa:
 
             #está escolhendo qual será o nó atual
             for no_aberto in self._lista_abertos:
-                if no_atual == None or f_de_x(no_aberto) < f_de_x(no_atual):
+                if no_atual == None or self.f_de_x(no_aberto, custo_acumulado[no_aberto]) < self.f_de_x(no_atual, custo_acumulado[no_atual]):
                     no_atual = no_aberto
             
-
-           
             if no_atual == None:
                 break
 
@@ -175,9 +173,15 @@ class Mapa:
                     nos_anteriores[no_adjacente] = no_atual
                     custo_acumulado[no_adjacente] = custo_acumulado[no_atual] + self.g_de_x(no_atual, no_adjacente)
 
-                elif custo_acumulado[no_adjacente] > custo_acumulado[no_atual] + self.g_de_x(no_atual, no_adjacente): 
-                    custo_acumulado[no_adjacente] = custo_acumulado[no_atual] + self.g_de_x(no_atual,no_adjacente) 
-                    nos_anteriores[no_adjacente] = no_atual
+                else:
+                    if custo_acumulado[no_adjacente] > custo_acumulado[no_atual] + self.g_de_x(no_atual, no_adjacente): 
+                        custo_acumulado[no_adjacente] = custo_acumulado[no_atual] + self.g_de_x(no_atual,no_adjacente) 
+                        nos_anteriores[no_adjacente] = no_atual
+
+                        if no_adjacente in self._lista_fechados:
+                            print("---//------//---- ENTROU ---//-------//-----")
+                            self._lista_fechados.remove(no_adjacente)
+                            self.add_lista_abertos(no_adjacente)
                 
                     
             self.add_lista_fechados(no_atual)
