@@ -5,13 +5,9 @@ from elementos_do_mapa.mapa_class import Mapa
 import pandas as pd
 
 
-Distancias_Euclidianas_Entre_Cidades.instance().set_db(pd.read_excel("./elementos_do_mapa/planilha_distancias.xlsx", sheet_name=None)) 
+Distancias_Euclidianas_Entre_Cidades.instance().set_db(pd.read_excel("./elementos_do_mapa/tabelas_info/planilha_distancias.xlsx", sheet_name=None)) 
 
-no_incial = "Araraquara"
-no_objetivo = "Presidente_Prudente"
+no_incial = "Barretos"
+no_objetivo = "Taubate"
 
-# print(Heuristica.calculate(no_incial, ""))
-
-# print(distancia_real_entre_nos/velocidade_maxima_entre_nos) + (distancia_euclidiana_ate_no_objetivo/media_velocidade_maxima)
-
-print(Mapa.instance().a_star_imp(no_incial, no_objetivo))
+print("Caminho encontrado: "+str(Mapa.instance().a_star_imp(no_incial, no_objetivo)))
