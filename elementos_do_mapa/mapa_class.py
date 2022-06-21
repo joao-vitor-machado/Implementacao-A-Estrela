@@ -12,6 +12,7 @@ class Mapa:
         self._lista_abertos = []
         self._lista_fechados = []
         self._caminho_solucao = []
+        self._repo_g_de_x = {}
         
         
         self._grafo = nx.read_edgelist('./elementos_do_mapa/grafos/cidades.txt', delimiter =",", data=[("distancia_real", int), ("velocidade_maxima", int)])
@@ -112,9 +113,12 @@ class Mapa:
                 #print(lista_heuristicas_calculadas)
 
         for valor in lista_heuristicas_calculadas:
+            print("de " + valor["no_fechado"] + " até " + valor["no_adjacente"] + " é " + str(valor["f_de_x"]))
             if valor["f_de_x"] < menor_custo:
                 menor_custo = valor["f_de_x"]
                 no_com_menor_custo = valor
+        
+        
 
         return no_com_menor_custo #é um map com todas as infos
 
@@ -124,34 +128,33 @@ class Mapa:
 
     def calcular_g_de_x(self, nome_no_1, nome_no_2):
         lista_nos_caminho = self.get_lista_solucao()
-        #print(lista_nos_caminho)
-        #print(range(len(lista_nos_caminho)))
         soma_de_g = 0
-        for i in range(len(lista_nos_caminho)):
-            try:
-                soma_de_distancia = self.get_distancia_real_entre_nos(lista_nos_caminho[i], lista_nos_caminho[i+1])
-                soma_de_velocidade = self.get_velocidade_maxima_entre_nos(lista_nos_caminho[i], lista_nos_caminho[i+1])
-                # print(soma_de_distancia)
-                # print(soma_de_velocidade)
-                soma_de_g += soma_de_distancia/soma_de_velocidade
-                #print(soma_de_g)
-                # soma_de_g += self.get_distancia_real_entre_nos(lista_nos_caminho[i], lista_nos_caminho[i+1])/self.get_velocidade_maxima_entre_nos(lista_nos_caminho[i], lista_nos_caminho[i+1])
-            except:
-                soma_de_g += 0
 
-        # soma_de_distancia += self.get_distancia_real_entre_nos(nome_no_1, nome_no_2)
-        # soma_de_velocidade += self.get_distancia_real_entre_nos(nome_no_1, nome_no_2)
-        print(self.get_distancia_real_entre_nos(nome_no_1, nome_no_2))
-        print(self.get_velocidade_maxima_entre_nos(nome_no_1, nome_no_2))
-        soma_de_g += (self.get_distancia_real_entre_nos(nome_no_1, nome_no_2)) / (self.get_velocidade_maxima_entre_nos(nome_no_1, nome_no_2))
+        try:
+            soma_de_g = self._repo_g_de_x[(nome_no_1, nome_no_2)]
+            
+        except:
 
+            for i in range(len(lista_nos_caminho)):
+                try:
+                    soma_de_distancia = self.get_distancia_real_entre_nos(lista_nos_caminho[i], lista_nos_caminho[i+1])
+                    soma_de_velocidade = self.get_velocidade_maxima_entre_nos(lista_nos_caminho[i], lista_nos_caminho[i+1])
+                    
+                    soma_de_g += soma_de_distancia/soma_de_velocidade
+
+                except:
+                    soma_de_g += 0
+
+            soma_de_g += (self.get_distancia_real_entre_nos(nome_no_1, nome_no_2)) / (self.get_velocidade_maxima_entre_nos(nome_no_1, nome_no_2))
+            self._repo_g_de_x[(nome_no_1, nome_no_2)] = soma_de_g
+        print(soma_de_g)
         return soma_de_g
 
 
     def funcao_heuristica(self, nome_no_1, nome_no_2):
         #Aqui devemos pegar a aresta com base no no_1 e no_2 e distância euclidiana do nó 2 ao nó obejtivo pelo mapa
         g_de_x = self.calcular_g_de_x(nome_no_1, nome_no_2)
-        print("G(x) entre " + nome_no_1 + " e " + nome_no_2 + " = " + str(g_de_x))
+        # print("G(x) entre " + nome_no_1 + " e " + nome_no_2 + " = " + str(g_de_x))
 
         distancia_euclidiana_ate_no_objetivo = Distancias_Euclidianas_Entre_Cidades.instance().get_distancia_entre_cidades(nome_no_2, self.get_no_objetivo())
         velocidade_maxima = 110
@@ -172,12 +175,12 @@ class Mapa:
 
         while no_atual != self._cidade_objetiva:
             self.add_lista_abertos(self.get_nos_adjacentes(no_atual))   
-            # print("Lista fechados:")
-            # print(self.get_lista_fechados()) 
-            # print("Lista abertos:")
-            # print(self.get_lista_abertos()) 
-            # print("Lista solução:")
-            # print(self.get_lista_solucao())
+            print("Lista fechados:")
+            print(self.get_lista_fechados()) 
+            print("Lista abertos:")
+            print(self.get_lista_abertos()) 
+            print("Lista solução:")
+            print(self.get_lista_solucao())
 
             no_menor_custo = self.get_no_menor_custo(self.get_lista_fechados())
             if no_menor_custo["no_fechado"] != self.get_lista_fechados()[-1]:
