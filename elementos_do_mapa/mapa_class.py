@@ -113,7 +113,7 @@ class Mapa:
                 #print(lista_heuristicas_calculadas)
 
         for valor in lista_heuristicas_calculadas:
-            print("de " + valor["no_fechado"] + " até " + valor["no_adjacente"] + " é " + str(valor["f_de_x"]))
+            # print("de " + valor["no_fechado"] + " até " + valor["no_adjacente"] + " é " + str(valor["f_de_x"]))
             if valor["f_de_x"] < menor_custo:
                 menor_custo = valor["f_de_x"]
                 no_com_menor_custo = valor
@@ -147,7 +147,7 @@ class Mapa:
 
             soma_de_g += (self.get_distancia_real_entre_nos(nome_no_1, nome_no_2)) / (self.get_velocidade_maxima_entre_nos(nome_no_1, nome_no_2))
             self._repo_g_de_x[(nome_no_1, nome_no_2)] = soma_de_g
-        print(soma_de_g)
+        # print(soma_de_g)
         return soma_de_g
 
 
@@ -184,14 +184,25 @@ class Mapa:
 
             no_menor_custo = self.get_no_menor_custo(self.get_lista_fechados())
             if no_menor_custo["no_fechado"] != self.get_lista_fechados()[-1]:
+                print("no menor custo: " + no_menor_custo["no_fechado"])
+                
                 posicao_no_remocao = self.get_lista_solucao().index(no_menor_custo["no_fechado"])
-                self._caminho_solucao = self.get_lista_solucao()[-posicao_no_remocao:-1]
+                # print("lista removida")
+                # print(self.get_lista_solucao()[-posicao_no_remocao:-1])
+                # self._caminho_solucao = self.get_lista_solucao()[-posicao_no_remocao:-1]
+                qtd_casas_a_remover = len(self.get_lista_solucao()) - posicao_no_remocao -1
+
+                for i in range(qtd_casas_a_remover):
+                    self._caminho_solucao.remove(self.get_lista_solucao()[-1])
+
+                self.add_lista_solucao(no_menor_custo["no_adjacente"])
+            else:
                 self.add_lista_solucao(no_menor_custo["no_adjacente"])
             no_atual = no_menor_custo["no_adjacente"]
 
             self.add_lista_fechados(no_atual)
             self.remove_lista_abertos(no_atual)
-            self.add_lista_solucao(no_atual)
+            
 
         return self.get_lista_solucao()
     
