@@ -11,7 +11,7 @@ Fernandopolis,Aracatuba,138,110
 Fernandopolis,SJRP,116,60
 SJRP,Fernandopolis,116,60
 SJRP,Barretos,95,110
-SJRP,Araraquara,171,60
+SJRP,Araraquara,171,110
 Barretos,SJRP,95,110
 Barretos,Franca,140,110
 Barretos,Ribeirao_Preto,123,110
@@ -22,7 +22,7 @@ Ribeirao_Preto,Franca,92,110
 Ribeirao_Preto,SJBV,85,110
 Ribeirao_Preto,Araraquara,88,110
 Ribeirao_Preto,Sao_Carlos,102,110
-Araraquara,SJRP,171,60
+Araraquara,SJRP,171,110
 Araraquara,Ribeirao_Preto,88,110
 Araraquara,Bauru,127,110
 Araraquara,Sao_Carlos,43,60

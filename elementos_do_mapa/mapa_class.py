@@ -81,10 +81,10 @@ class Mapa:
 
     def add_lista_fechados(self, nome_no):
         self._lista_fechados.append(nome_no)
-        lista_nos_adjacentes = self.get_nos_adjacentes(nome_no)
+        # lista_nos_adjacentes = self.get_nos_adjacentes(nome_no)
 
-        for no in lista_nos_adjacentes:
-            self.add_lista_abertos(no)
+        # for no in lista_nos_adjacentes:
+        #     self.add_lista_abertos(no)
 
         return "no: " + nome_no + " foi adicionado à lista de fechados"
 
@@ -129,63 +129,66 @@ class Mapa:
     
 
     def a_star_imp(self, no_inicial, no_objetivo):
+
+        def f_de_x(no):
+            return self.funcao_avaliacao(custo_acumulado[no], self.funcao_heuristica(no))
+
         self._cidade_objetiva = no_objetivo
 
         custo_acumulado = {}
         custo_acumulado[no_inicial] = 0
 
+        #funciona como se fosse uma lista ligada
         nos_anteriores = {}
         nos_anteriores[no_inicial] = no_inicial
 
         self.add_lista_abertos(no_inicial)
 
         while len(self._lista_abertos) > 0:
-            no = None
+            no_atual = None
 
-            for n in self._lista_abertos:
-                if no == None or self.funcao_avaliacao(custo_acumulado[n], self.funcao_heuristica(n)) < self.funcao_avaliacao(custo_acumulado[no], self.funcao_heuristica(no)):
-                    no = n
+            #está escolhendo qual será o nó atual
+            for no_aberto in self._lista_abertos:
+                if no_atual == None or f_de_x(no_aberto) < f_de_x(no_atual):
+                    no_atual = no_aberto
+            
 
-            if no == None:
+           
+            if no_atual == None:
                 break
 
-            if no == no_objetivo:
+            if no_atual == no_objetivo:
 
-                self.add_lista_fechados(no)
-                self.remove_lista_abertos(no)
+                self.add_lista_fechados(no_atual)
+                self.remove_lista_abertos(no_atual)
 
-                while nos_anteriores[no] != no:
-                    self.add_lista_solucao(no)
-                    no = nos_anteriores[no]
+                #Coloca o nó atual na solução até encontrar o nó anterior do nó inicial, que é o próprio nó inicial (vide linha 143)
+                while nos_anteriores[no_atual] != no_atual:
+                    self.add_lista_solucao(no_atual)
+                    no_atual = nos_anteriores[no_atual]
                 
-                self.add_lista_solucao(no_inicial)
+                self.add_lista_solucao(no_atual)
                 self._caminho_solucao.reverse()
-
-                print("lista abertos: "+str(self.get_lista_abertos()))
-                print(("lista fechados: "+str(self.get_lista_fechados())))
 
                 return self.get_lista_solucao()
         
-            for no_vizinho in self.get_nos_adjacentes(no):
-                if no_vizinho not in self._lista_abertos and no_vizinho not in self._lista_fechados:
-                    self.add_lista_abertos(no_vizinho)
-                    nos_anteriores[no_vizinho] = no
-                    custo_acumulado[no_vizinho] = custo_acumulado[no] + self.g_de_x(no, no_vizinho) #funcao g(x)
+            for no_adjacente in self.get_nos_adjacentes(no_atual):
+                if no_adjacente not in self._lista_abertos and no_adjacente not in self._lista_fechados:
+                    self.add_lista_abertos(no_adjacente)
+                    nos_anteriores[no_adjacente] = no_atual
+                    custo_acumulado[no_adjacente] = custo_acumulado[no_atual] + self.g_de_x(no_atual, no_adjacente)
 
-                elif custo_acumulado[no_vizinho] > custo_acumulado[no] + self.g_de_x(no, no_vizinho): #funcao g(x)
-                    custo_acumulado[no_vizinho] = custo_acumulado[no] + self.g_de_x(no, no_vizinho) #funcao g(x)
-                    nos_anteriores[no_vizinho] = no
-
-                    if no_vizinho in self._lista_fechados:
-                        # self._lista_fechados.remove(no_vizinho)
-                        self.add_lista_abertos(no_vizinho)
+                elif custo_acumulado[no_adjacente] > custo_acumulado[no_atual] + self.g_de_x(no_atual, no_adjacente): 
+                    custo_acumulado[no_adjacente] = custo_acumulado[no_atual] + self.g_de_x(no_atual,no_adjacente) 
+                    nos_anteriores[no_adjacente] = no_atual
                 
                     
-            self.add_lista_fechados(no)
-            self.remove_lista_abertos(no)
+            self.add_lista_fechados(no_atual)
+            self.remove_lista_abertos(no_atual)
 
-            # print("lista abertos: "+str(self.get_lista_abertos()))
-            # print(("lista fechados: "+str(self.get_lista_fechados())))
+           
+            print("lista abertos: "+str(self.get_lista_abertos()))
+            print(("lista fechados: "+str(self.get_lista_fechados())))
 
         print('Solucao inexistente')
         return None
