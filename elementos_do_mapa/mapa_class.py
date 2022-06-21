@@ -158,6 +158,8 @@ class Mapa:
                     if no_vizinho in self._lista_fechados:
                         self.remove_lista_solucao(no_vizinho)
                         self.add_lista_abertos(no_vizinho)
-                    
+            
+            
             self.add_lista_fechados(no)
             self.remove_lista_abertos(no)
+            
