@@ -1,8 +1,9 @@
 from copy import deepcopy
 import enum
+import random
 import networkx as nx
 from elementos_do_mapa.distancias_Euclidianas_Entre_Cidades import Distancias_Euclidianas_Entre_Cidades
-from elementos_do_mapa.colecao_no import Colecao_No
+
 
 class Mapa:
 
@@ -13,7 +14,7 @@ class Mapa:
         self._lista_fechados = []
         self._caminho_solucao = []
         
-        self._grafo = nx.read_edgelist('./elementos_do_mapa/grafos/cidades.txt', delimiter =",", data=[("distancia_real", int), ("velocidade_maxima", int)])
+        self._grafo = nx.read_edgelist('./elementos_do_mapa/tabelas_info/cidades.txt', delimiter =",", data=[("distancia_real", int), ("velocidade_maxima", int)])
 
 
     @classmethod
@@ -88,6 +89,14 @@ class Mapa:
         return "no: " + nome_no + " foi adicionado à lista de fechados"
 
 
+    def remove_lista_solucao(self, nome_no):
+        try:
+            self._caminho_solucao.remove(nome_no)
+            return "no: " + nome_no + " foi removido da lista de solução"
+        except:
+            return "Não há ocorrência desse nó na lista de solução"
+
+
     def get_nos_adjacentes(self, nome_no):
         map = self._grafo[nome_no]
         lista_adjacentes = []
@@ -102,10 +111,15 @@ class Mapa:
     def funcao_heuristica(self, no):
 
         distancia_euclidiana_ate_no_objetivo = Distancias_Euclidianas_Entre_Cidades.instance().get_distancia_entre_cidades(no, self.get_no_objetivo())
-        velocidade_maxima = 110
+        velocidade_media = 110
+
+        return (float(distancia_euclidiana_ate_no_objetivo/velocidade_media))
+
+    def funcao_heuristica_inadmissivel(self,no):
+        distancia_euclidiana_ate_no_objetivo = Distancias_Euclidianas_Entre_Cidades.instance().get_distancia_entre_cidades(no, self.get_no_objetivo())
+        velocidade_minima = 60
 
         return (float(distancia_euclidiana_ate_no_objetivo/velocidade_maxima))
-
 
     def funcao_avaliacao(self, g, h):
         return g + h
@@ -113,9 +127,6 @@ class Mapa:
 
     def a_star_imp(self, no_inicial, no_objetivo):
         self._cidade_objetiva = no_objetivo
-
-        caminho_final = []
-        caminhos_possiveis = []
 
         custo_acumulado = {}
         custo_acumulado[no_inicial] = 0
@@ -137,13 +148,16 @@ class Mapa:
 
             if no == no_objetivo:
                 while nos_anteriores[no] != no:
-                    caminho_final.append(no)
+                    self.add_lista_solucao(no)
                     no = nos_anteriores[no]
                 
-                caminho_final.append(no_inicial)
-                caminho_final.reverse()
+                self.add_lista_solucao(no_inicial)
+                self._caminho_solucao.reverse()
 
-                return caminho_final
+                print("lista abertos: "+str(self.get_lista_abertos()))
+                print(("lista fechados: "+str(self.get_lista_fechados())))
+
+                return self.get_lista_solucao()
         
             for no_vizinho in self.get_nos_adjacentes(no):
                 if no_vizinho not in self._lista_abertos and no_vizinho not in self._lista_fechados:
@@ -156,10 +170,15 @@ class Mapa:
                     nos_anteriores[no_vizinho] = no
 
                     if no_vizinho in self._lista_fechados:
-                        self.remove_lista_solucao(no_vizinho)
+                        self.remove_lista_fechados(no_vizinho)
                         self.add_lista_abertos(no_vizinho)
-            
-            
+                
+                    
             self.add_lista_fechados(no)
             self.remove_lista_abertos(no)
-            
+
+            print("lista abertos: "+str(self.get_lista_abertos()))
+            print(("lista fechados: "+str(self.get_lista_fechados())))
+
+        print('Solucao inexistente')
+        return None
