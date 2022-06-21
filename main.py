@@ -14,4 +14,4 @@ no_objetivo = "Presidente_Prudente"
 
 # print(distancia_real_entre_nos/velocidade_maxima_entre_nos) + (distancia_euclidiana_ate_no_objetivo/media_velocidade_maxima)
 
-print(Mapa.instance().run_A_estela(no_incial, no_objetivo))
+print(Mapa.instance().a_star_imp(no_incial, no_objetivo))
