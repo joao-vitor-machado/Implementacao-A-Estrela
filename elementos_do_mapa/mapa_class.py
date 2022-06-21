@@ -163,10 +163,10 @@ class Mapa:
                 if no_vizinho not in self._lista_abertos and no_vizinho not in self._lista_fechados:
                     self.add_lista_abertos(no_vizinho)
                     nos_anteriores[no_vizinho] = no
-                    custo_acumulado[no_vizinho] = custo_acumulado[no] + (self.get_distancia_real_entre_nos(no, no_vizinho)/self.get_velocidade_maxima_entre_nos(no, no_vizinho))
+                    custo_acumulado[no_vizinho] = custo_acumulado[no] + (self.get_distancia_real_entre_nos(no, no_vizinho)/self.get_velocidade_maxima_entre_nos(no, no_vizinho)) #funcao g(x)
 
-                elif custo_acumulado[no_vizinho] > custo_acumulado[no] + (self.get_distancia_real_entre_nos(no, no_vizinho)/self.get_velocidade_maxima_entre_nos(no, no_vizinho)):
-                    custo_acumulado[no_vizinho] = custo_acumulado[no] + (self.get_distancia_real_entre_nos(no, no_vizinho)/self.get_velocidade_maxima_entre_nos(no, no_vizinho))
+                elif custo_acumulado[no_vizinho] > custo_acumulado[no] + (self.get_distancia_real_entre_nos(no, no_vizinho)/self.get_velocidade_maxima_entre_nos(no, no_vizinho)): #funcao g(x)
+                    custo_acumulado[no_vizinho] = custo_acumulado[no] + (self.get_distancia_real_entre_nos(no, no_vizinho)/self.get_velocidade_maxima_entre_nos(no, no_vizinho)) #funcao g(x)
                     nos_anteriores[no_vizinho] = no
 
                     if no_vizinho in self._lista_fechados:
