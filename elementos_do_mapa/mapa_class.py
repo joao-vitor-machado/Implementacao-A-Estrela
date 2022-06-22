@@ -119,11 +119,11 @@ class Mapa:
     def funcao_avaliacao(self, g, h):
         return g + h
 
-    def distancia_de_x(self, no_1, no_2):
-        return round((self.get_distancia_real_entre_nos(no_1, no_2)/self.get_velocidade_maxima_entre_nos(no_1, no_2)),2)
+    def custo_de_x(self, no_1, no_2):
+        return round((self.get_distancia_real_entre_nos(no_1, no_2)/self.get_velocidade_maxima_entre_nos(no_1, no_2)),4)
     
     def f_de_x(self, no, custo_acumulado):
-        return self.funcao_avaliacao(custo_acumulado, self.funcao_heuristica_inadmissivel(no))
+        return self.funcao_avaliacao(custo_acumulado, self.funcao_heuristica(no))
 
 
     def run_a_Estela(self, no_inicial, no_objetivo):
@@ -166,9 +166,13 @@ class Mapa:
                 self.add_lista_solucao(no_atual)
                 self._caminho_solucao.reverse() # inverte a ordem pois o loop anterior inicia pelo nó objetivo e vai até o inicial (está ao contrario)
 
-                print("")
-                print("<-------------------------------------------------------------------------->")
-                print("")
+                print("\n<-------------------------------------------------------------------------->\n")
+
+                print(("lista final de fechados: "+str(self.get_lista_fechados())))
+                print("\nlista final de abertos: "+str(self.get_lista_abertos()))
+
+                print("\n<-------------------------------------------------------------------------->\n")
+
                 return self.get_lista_solucao()
         
             # caso o nó não seja o objetivo, o if anterior é ignorado e segue para esse
@@ -178,12 +182,12 @@ class Mapa:
                 if no_adjacente not in self._lista_abertos and no_adjacente not in self._lista_fechados:
                     self.add_lista_abertos(no_adjacente) # adiciona a lista de abertos
                     nos_anteriores[no_adjacente] = no_atual # adiciona na lista de nós anteriores (referindo o nó atual como o anterior do adjacente)
-                    custo_acumulado[no_adjacente] = custo_acumulado[no_atual] + self.distancia_de_x(no_atual, no_adjacente) # registra custo acumulado até o nó
+                    custo_acumulado[no_adjacente] = custo_acumulado[no_atual] + self.custo_de_x(no_atual, no_adjacente) # registra custo acumulado até o nó
 
                 else:
                     # caso ele esteja na lista de abertos ou na de fechados e o custo acumulado ja registrado anteriormente seja maior do que o atual
-                    if custo_acumulado[no_adjacente] > custo_acumulado[no_atual] + self.distancia_de_x(no_atual, no_adjacente): 
-                        custo_acumulado[no_adjacente] = custo_acumulado[no_atual] + self.distancia_de_x(no_atual,no_adjacente) # atualiza custo acumulado
+                    if custo_acumulado[no_adjacente] > custo_acumulado[no_atual] + self.custo_de_x(no_atual, no_adjacente): 
+                        custo_acumulado[no_adjacente] = custo_acumulado[no_atual] + self.custo_de_x(no_atual,no_adjacente) # atualiza custo acumulado
                         nos_anteriores[no_adjacente] = no_atual # atualiza nó anterior
 
                         # se estiver na lista de fechados ele remove de fechados e coloca em abertos de novo
