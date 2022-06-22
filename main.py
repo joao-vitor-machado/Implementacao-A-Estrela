@@ -9,7 +9,7 @@ OBSERVAÇÃO [1]:
 
 O código está configurado inicialmente para utilizar a heurística admissível.
 
-Para utilizar a heurística inadmissível, troque a linha 132 do arquivo mapa_class.py:
+Para utilizar a heurística inadmissível, troque a linha 131 do arquivo mapa_class.py:
 
 anteriormente:
         return self.funcao_avaliacao(custo_acumulado, self.funcao_heuristica(no))
