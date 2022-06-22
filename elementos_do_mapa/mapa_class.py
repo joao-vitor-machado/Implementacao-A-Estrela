@@ -14,7 +14,7 @@ class Mapa:
         self._lista_fechados = []
         self._caminho_solucao = []
         
-        # Lendo arquivo com informações das cidades e distancias/velocidades entre elas
+        # cria um grafo do networkx, bem como as arestas (e automaticamente os nós) com suas respectivas velocidades máximas e distância real
         self._grafo = nx.read_edgelist('./elementos_do_mapa/tabelas_info/cidades.txt', delimiter =",", data=[("distancia_real", int), ("velocidade_maxima", int)])
 
 
@@ -27,12 +27,14 @@ class Mapa:
 
 
     def get_velocidade_maxima_entre_nos(self, nome_no_1, nome_no_2):
+        #Acessa a aresta ao combinar duas chaves com nomes de nó
         properties_aresta = self._grafo[nome_no_1][nome_no_2]
 
         return properties_aresta["velocidade_maxima"]
 
 
     def get_distancia_real_entre_nos(self, nome_no_1, nome_no_2):
+        #Acessa a aresta ao combinar duas chaves com nomes de nó
         properties_aresta = self._grafo[nome_no_1][nome_no_2]
 
         return properties_aresta["distancia_real"]
@@ -53,13 +55,16 @@ class Mapa:
 
 
     def add_lista_abertos(self, value):
+        #Ele verifica se ele está recebendo uma string ou lista e adiciona todos os valores na lista
         if type(value) is str:
+            #Não pode adicionar nós que já estejam abertos ou que estejam fechados
             if self._lista_abertos.count(value) < 1 and self._lista_fechados.count(value) < 1:
                 self._lista_abertos.append(value)
                 return "no: " + value + " foi adicionado à lista de abertos"
 
         if type(value) is list:
             for no in value:
+                #Não pode adicionar nós que já estejam abertos ou que estejam fechados
                 if self._lista_abertos.count(no) < 1 and self._lista_fechados.count(no) < 1:
                     self._lista_abertos.append(no)
                     return "nos adicionados à lista de abertos"
@@ -94,6 +99,7 @@ class Mapa:
 
 
     def get_nos_adjacentes(self, nome_no):
+        #Acessa a chave do nó em questão, que retorna os nós adjacentes
         map = self._grafo[nome_no]
         lista_adjacentes = []
 
@@ -159,6 +165,8 @@ class Mapa:
 
                 # passa por todos os nós registrados como "pais" do nó atual, 
                 # ou seja, passa pelo caminho da solução, e armazena eles na lista de solução
+
+                #Coloca o nó atual na solução até encontrar o nó anterior do nó inicial, que é o próprio nó inicial (vide linha 143)
                 while nos_anteriores[no_atual] != no_atual:
                     self.add_lista_solucao(no_atual)
                     no_atual = nos_anteriores[no_atual]
