@@ -110,15 +110,14 @@ class Mapa:
 
 
     def funcao_heuristica(self, no):
-        # pega a distancia euclidiana entre um nó e o nó objetivo
         distancia_euclidiana_ate_no_objetivo = Distancias_Euclidianas_Entre_Cidades.instance().get_distancia_entre_cidades(no, self.get_no_objetivo())
-        velocidade_media = 110 # velocidade estimada para o grupo para calcular o tempo medio até o nó objetivo
+        velocidade_maxima = 110 # velocidade máxima permitida numa via para calcular o tempo mínimo até o nó objetivo
 
-        return (float(distancia_euclidiana_ate_no_objetivo/velocidade_media))
+        return (float(distancia_euclidiana_ate_no_objetivo/velocidade_maxima))
 
     def funcao_heuristica_inadmissivel(self,no):
         distancia_euclidiana_ate_no_objetivo = Distancias_Euclidianas_Entre_Cidades.instance().get_distancia_entre_cidades(no, self.get_no_objetivo())
-        velocidade_minima = 60 # velocidade que superestima a heuristica em relação aos valores reais
+        velocidade_minima = 60 # velocidade que superestima o tempo calculado pela heuristica em relação aos valores reais
 
         return (float(distancia_euclidiana_ate_no_objetivo/velocidade_minima))
 
@@ -150,7 +149,7 @@ class Mapa:
         while len(self._lista_abertos) > 0:
             no_atual = None
 
-            # escolhe qual será o nó atual
+            # define qual será o nó atual a partir do f(x)
             for no_aberto in self._lista_abertos:
                 if no_atual == None or self.f_de_x(no_aberto, custo_acumulado[no_aberto]) < self.f_de_x(no_atual, custo_acumulado[no_atual]):
                     no_atual = no_aberto
