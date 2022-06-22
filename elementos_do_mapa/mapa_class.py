@@ -14,6 +14,7 @@ class Mapa:
         self._lista_fechados = []
         self._caminho_solucao = []
         
+        # Lendo arquivo com informações das cidades e distancias/velocidades entre elas
         self._grafo = nx.read_edgelist('./elementos_do_mapa/tabelas_info/cidades.txt', delimiter =",", data=[("distancia_real", int), ("velocidade_maxima", int)])
 
 
@@ -103,22 +104,22 @@ class Mapa:
 
 
     def funcao_heuristica(self, no):
-
+        # pega a distancia euclidiana entre um nó e o nó objetivo
         distancia_euclidiana_ate_no_objetivo = Distancias_Euclidianas_Entre_Cidades.instance().get_distancia_entre_cidades(no, self.get_no_objetivo())
-        velocidade_media = 110
+        velocidade_media = 110 # velocidade estimada para o grupo para calcular o tempo medio até o nó objetivo
 
         return (float(distancia_euclidiana_ate_no_objetivo/velocidade_media))
 
     def funcao_heuristica_inadmissivel(self,no):
         distancia_euclidiana_ate_no_objetivo = Distancias_Euclidianas_Entre_Cidades.instance().get_distancia_entre_cidades(no, self.get_no_objetivo())
-        velocidade_minima = 60
+        velocidade_minima = 60 # velocidade que superestima a heuristica em relação aos valores reais
 
         return (float(distancia_euclidiana_ate_no_objetivo/velocidade_minima))
 
     def funcao_avaliacao(self, g, h):
         return g + h
 
-    def g_de_x(self, no_1, no_2):
+    def distancia_de_x(self, no_1, no_2):
         return round((self.get_distancia_real_entre_nos(no_1, no_2)/self.get_velocidade_maxima_entre_nos(no_1, no_2)),2)
     
     def f_de_x(self, no, custo_acumulado):
@@ -129,60 +130,68 @@ class Mapa:
 
         self._cidade_objetiva = no_objetivo
 
+        # armazena o custo acumulado para chegar em cada nó do mapa
         custo_acumulado = {}
         custo_acumulado[no_inicial] = 0
 
-        #funciona como se fosse uma lista ligada
+        # funciona como se fosse uma lista ligada, armazena qual nó é "pai" de qual
         nos_anteriores = {}
-        nos_anteriores[no_inicial] = no_inicial
+        nos_anteriores[no_inicial] = no_inicial # o nó inicial não tem nó anterior
 
-        self.add_lista_abertos(no_inicial)
+        self.add_lista_abertos(no_inicial) # inicial começa como aberto para algoritmo iniciar por ele
 
+        # loop continua até que todos os nós tenham sido abertos e depois visitados (garante otimalidade)
         while len(self._lista_abertos) > 0:
             no_atual = None
 
-            #está escolhendo qual será o nó atual
+            # escolhe qual será o nó atual
             for no_aberto in self._lista_abertos:
                 if no_atual == None or self.f_de_x(no_aberto, custo_acumulado[no_aberto]) < self.f_de_x(no_atual, custo_acumulado[no_atual]):
                     no_atual = no_aberto
             
-            if no_atual == None:
+            if no_atual == None: 
                 break
 
-            if no_atual == no_objetivo:
+            if no_atual == no_objetivo: 
 
                 self.add_lista_fechados(no_atual)
                 self.remove_lista_abertos(no_atual)
 
-                #Coloca o nó atual na solução até encontrar o nó anterior do nó inicial, que é o próprio nó inicial (vide linha 143)
+                # passa por todos os nós registrados como "pais" do nó atual, 
+                # ou seja, passa pelo caminho da solução, e armazena eles na lista de solução
                 while nos_anteriores[no_atual] != no_atual:
                     self.add_lista_solucao(no_atual)
                     no_atual = nos_anteriores[no_atual]
                 
                 self.add_lista_solucao(no_atual)
-                self._caminho_solucao.reverse()
+                self._caminho_solucao.reverse() # inverte a ordem pois o loop anterior inicia pelo nó objetivo e vai até o inicial (está ao contrario)
 
                 print("")
                 print("<-------------------------------------------------------------------------->")
                 print("")
                 return self.get_lista_solucao()
         
+            # caso o nó não seja o objetivo, o if anterior é ignorado e segue para esse
+            # para cada nó adjacente ao atual são verificadas as seguintes condições
             for no_adjacente in self.get_nos_adjacentes(no_atual):
+                # se não está na lista de abertos nem fechados
                 if no_adjacente not in self._lista_abertos and no_adjacente not in self._lista_fechados:
-                    self.add_lista_abertos(no_adjacente)
-                    nos_anteriores[no_adjacente] = no_atual
-                    custo_acumulado[no_adjacente] = custo_acumulado[no_atual] + self.g_de_x(no_atual, no_adjacente)
+                    self.add_lista_abertos(no_adjacente) # adiciona a lista de abertos
+                    nos_anteriores[no_adjacente] = no_atual # adiciona na lista de nós anteriores (referindo o nó atual como o anterior do adjacente)
+                    custo_acumulado[no_adjacente] = custo_acumulado[no_atual] + self.distancia_de_x(no_atual, no_adjacente) # registra custo acumulado até o nó
 
                 else:
-                    if custo_acumulado[no_adjacente] > custo_acumulado[no_atual] + self.g_de_x(no_atual, no_adjacente): 
-                        custo_acumulado[no_adjacente] = custo_acumulado[no_atual] + self.g_de_x(no_atual,no_adjacente) 
-                        nos_anteriores[no_adjacente] = no_atual
+                    # caso ele esteja na lista de abertos ou na de fechados e o custo acumulado ja registrado anteriormente seja maior do que o atual
+                    if custo_acumulado[no_adjacente] > custo_acumulado[no_atual] + self.distancia_de_x(no_atual, no_adjacente): 
+                        custo_acumulado[no_adjacente] = custo_acumulado[no_atual] + self.distancia_de_x(no_atual,no_adjacente) # atualiza custo acumulado
+                        nos_anteriores[no_adjacente] = no_atual # atualiza nó anterior
 
+                        # se estiver na lista de fechados ele remove de fechados e coloca em abertos de novo
                         if no_adjacente in self._lista_fechados:
-                            self._lista_fechados.remove(no_adjacente)
+                            self._lista_fechados.remove(no_adjacente) 
                             self.add_lista_abertos(no_adjacente)
                 
-                    
+            # adiciona o nó atual na lista de fechados e remove de abertos        
             self.add_lista_fechados(no_atual)
             self.remove_lista_abertos(no_atual)
 
