@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./elementos_do_mapa/tabelas_info"
+    ]
+}
