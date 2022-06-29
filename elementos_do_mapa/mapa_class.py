@@ -158,7 +158,6 @@ class Mapa:
                 break
 
             if no_atual == no_objetivo: 
-
                 self.add_lista_fechados(no_atual)
                 self.remove_lista_abertos(no_atual)
 
@@ -175,7 +174,8 @@ class Mapa:
 
                 print("\n<-------------------------------------------------------------------------->\n")
 
-                print(("lista final de fechados: "+str(self.get_lista_fechados())))
+                print("gasto acumulado final: "+str(custo_acumulado[no_objetivo]))
+                print(("\nlista final de fechados: "+str(self.get_lista_fechados())))
                 print("\nlista final de abertos: "+str(self.get_lista_abertos()))
 
                 print("\n<-------------------------------------------------------------------------->\n")
